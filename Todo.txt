@@ -1,0 +1,6 @@
+- Add remove talk functionality
+- Construct metadata from talk note database
+- Is there a way to save unsaved input if e.g. computer crashes while editing?
+- Check for existing talk file before creating new one and handle appropriately (i.e. mismatch between database and metadata)
+- Handle multiple people with the same name
+- Be more careful about processing input for things that might cause issues
