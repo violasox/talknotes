@@ -1,7 +1,7 @@
 import argparse
 import click
-import pickle
 import datetime
+import pickle
 import os
 import subprocess
 import time
@@ -18,7 +18,7 @@ class Talk:
         self.id = id
     
     def print_info(self):
-        dateStr = self.date.__str__()
+        dateStr = str(self.date)
         if self.title is None:
             titleStr = 'Untitled'
         else:
@@ -108,6 +108,16 @@ class Person:
         talk.title = title
         talk.venue = venue
         talk.date = talkDate
+        
+    def display_talks(self, databasePath):
+        sortedTalks = sorted(self.talks, key=lambda talk: talk.date)
+        allTalkString = '---Do not edit! No changes here will be saved.---\n\n'
+        for talk in sortedTalks:
+            fileName = '{}.txt'.format(talk.id)
+            talkPath = os.path.join(databasePath, self.folderName, fileName)
+            with open(talkPath, 'r', encoding='utf-8') as f:
+                allTalkString += (f.read().strip() + '\n\n')
+        click.edit(text=allTalkString)
 
         
     def add_talk(self, databasePath):
@@ -202,6 +212,7 @@ commandOptions.add_argument('-i', '--printInfo', type=int, help='Print info abou
 commandOptions.add_argument('-e', '--editTalk', type=int, nargs=2, help='Edit notes for talk <talk_id> by person <person_id>', metavar=('<person_id>', '<talk_id>'))
 commandOptions.add_argument('-u', '--updateRole', nargs=2, help='Update the job or role for person <person_id>', metavar=('<person_id>', '<newRole>'))
 commandOptions.add_argument('-s', '--search', help='Search for people named <name>', metavar='<name>')
+commandOptions.add_argument('-p', '--printTalks', type=int, help='Print notes from all talks by person <id>', metavar='<id>')
 args = parser.parse_args()
 
 metadata = load_metadata(args.metadataPath)
@@ -229,7 +240,8 @@ elif args.printInfo is not None:
     for pastRole in person.pastRoles:
         print('Previous role: {}'.format(pastRole))
     print('Talks in notes database:')
-    for talk in person.talks:
+    sortedTalks = sorted(person.talks, key=lambda talk: talk.date)
+    for talk in sortedTalks:
         talk.print_info()
 elif args.editTalk is not None:
     (personId, talkId) = args.editTalk
@@ -247,3 +259,7 @@ elif args.updateRole is not None:
 elif args.search is not None:
     namesToSearch = args.search.lower().split() # lowercase and split first and last (and etc) names
     metadata.search_name(namesToSearch)
+elif args.printTalks is not None:
+    personId = args.printTalks
+    person = check_existence(personId)
+    person.display_talks(databasePath)
