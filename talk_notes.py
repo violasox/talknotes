@@ -54,7 +54,7 @@ class Person:
         else:
             filename = os.path.join(databasePath, self.folderName, '{}.txt'.format(talkId))
             click.edit(filename=filename)
-            with open(filename, 'r') as f:
+            with open(filename, 'r', encoding='utf-8') as f:
                 returnedText = f.read()
         try:
             yearString = returnedText.partition('Year:')[2].partition(',')[0].strip()
@@ -90,18 +90,18 @@ class Person:
             try: 
                 fileName = '{}.txt'.format(talk.id)
                 pathUsed = os.path.join(databasePath, self.folderName, fileName)
-                with open(pathUsed, 'w') as f:      
+                with open(pathUsed, 'w', encoding='utf-8') as f:      
                     f.write(returnedText)
                 print('Successfully saved talk information to {}'.format(pathUsed))
             except:
                 secondsSinceEpoch = int(time.mktime(time.localtime()))
                 try:
                     pathUsed = os.path.join(databasePath, '{}.txt'.format(secondsSinceEpoch))
-                    with open(pathUsed, 'w') as f:
+                    with open(pathUsed, 'w', encoding='utf-8') as f:
                         f.write(returnedText)
                 except:
                     pathUsed = '{}.txt'.format(secondsSinceEpoch)
-                    with open(pathUsed, 'w') as f:
+                    with open(pathUsed, 'w', encoding='utf-8') as f:
                         f.write(returnedText)
                 print('Error saving talk file, please check entry saved at {} and try again'.format(pathUsed))   
                 
